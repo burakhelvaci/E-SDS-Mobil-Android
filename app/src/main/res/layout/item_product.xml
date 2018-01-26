@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/product_img"
+        android:layout_marginTop="25dp"
+        android:layout_width="match_parent"
+        android:layout_height="340dp"
+        android:src="@drawable/product"/>
+
+    <TextView
+        android:id="@+id/product_name"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:gravity="center"
+        android:text="ASUS ROG MAXIMUS X HERO Intel Z370 Socket 1151 DDR4 4133+Mhz(OC) USB3.1 Anakart"/>
+
+    <TextView
+        android:id="@+id/product_price"
+        android:layout_marginBottom="25dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="1699.99 TL"
+        android:textSize="28dp"
+        android:textStyle="bold" />
+
+</LinearLayout>
