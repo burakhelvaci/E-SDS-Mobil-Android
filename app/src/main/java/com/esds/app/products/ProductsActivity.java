@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SubMenu;
 import android.view.View;
@@ -25,8 +24,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.esds.app.R;
-import com.esds.app.service.IApiService;
-import com.esds.app.service.impl.ApiService;
+import com.esds.app.service.RestService;
+import com.esds.app.service.impl.RestServiceImpl;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -34,7 +33,7 @@ import org.json.JSONObject;
 
 public class ProductsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
 
-    IApiService apiService;
+    RestService apiService;
     JSONArray categories = new JSONArray();
     JSONArray products = new JSONArray();
 
@@ -49,7 +48,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        apiService = new ApiService();
+        apiService = new RestServiceImpl();
 
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         Menu sideMenu = navView.getMenu();
@@ -73,7 +72,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
 
         try {
-            products = apiService.prepareProductsData(0);
+            products = apiService.fetchProductsData(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,7 +170,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         try {
-            products = apiService.prepareProductsData(id);
+            products = apiService.fetchProductsData(id);
             baseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,7 +183,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
 
     private void getCategories(SubMenu menuGroup) {
         try {
-            categories = apiService.prepareCategoriesData();
+            categories = apiService.fetchCategoriesData();
             for (int i = 0; i < categories.length(); i++) {
                 JSONObject category = categories.getJSONObject(i);
                 CharSequence itemName = category.getString("name");

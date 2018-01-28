@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.esds.app.service.IApiService;
-import com.esds.app.service.impl.ApiService;
+import com.esds.app.service.RestService;
+import com.esds.app.service.impl.RestServiceImpl;
 
 public class LoginActivity extends AppCompatActivity {
 
     EditText un, pw;
-    IApiService apiService;
+    RestService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
         un = findViewById(R.id.edittext_un);
         pw = findViewById(R.id.edittext_pw);
 
-        apiService = new ApiService();
+        apiService = new RestServiceImpl();
     }
 
     public void doLogin(View view) {
@@ -30,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         final String password = pw.getText().toString();
 
         try {
-            String responseData = apiService.prepareLoginData(username, password);
+            String responseData = apiService.fetchLoginData(username, password);
             if (responseData.equals("true")) {
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                 intent.putExtra("username", username);

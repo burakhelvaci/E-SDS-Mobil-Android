@@ -4,7 +4,7 @@ import org.json.JSONArray;
 
 import java.util.concurrent.ExecutionException;
 
-public interface IApiDao {
+public interface RestDao {
 
     String fetchLoginData(final String username, final String password) throws Exception;
 
@@ -16,5 +16,5 @@ public interface IApiDao {
 
     String fetchProductsData(int id) throws Exception;
 
-    void emitLoggingLocation(String visitId);
+    void setLocationCheck(String visitId);
 }

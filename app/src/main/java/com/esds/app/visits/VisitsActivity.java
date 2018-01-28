@@ -12,15 +12,15 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.esds.app.R;
-import com.esds.app.service.IApiService;
-import com.esds.app.service.impl.ApiService;
+import com.esds.app.service.RestService;
+import com.esds.app.service.impl.RestServiceImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class VisitsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    IApiService apiService;
+    RestService apiService;
 
     JSONArray visitArr = new JSONArray();
     BaseAdapter baseAdapter;
@@ -34,7 +34,7 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visits);
 
-        apiService = new ApiService();
+        apiService = new RestServiceImpl();
 
         username = getIntent().getExtras().getString("username");
         listView = findViewById(R.id.visit_listview);
@@ -45,7 +45,7 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onRefresh() {
                 try {
-                    visitArr = apiService.prepareVisitListData(username);
+                    visitArr = apiService.fetchVisitsData(username);
                     baseAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -101,7 +101,7 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
         listView.setOnItemClickListener(this);
 
         try {
-            visitArr = apiService.prepareVisitListData(username);
+            visitArr = apiService.fetchVisitsData(username);
             baseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();

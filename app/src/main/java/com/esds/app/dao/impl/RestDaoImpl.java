@@ -1,23 +1,15 @@
 package com.esds.app.dao.impl;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.esds.app.HomeActivity;
-import com.esds.app.LoginActivity;
-import com.esds.app.dao.IApiDao;
+import com.esds.app.dao.RestDao;
 
 import org.jsoup.Jsoup;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-public class ApiDao implements IApiDao {
+public class RestDaoImpl implements RestDao {
 
     @Override
-    public String fetchLoginData(final String username, final String password) throws Exception {
+    public String fetchLoginData(final String userName, final String password) throws Exception {
         return new AsyncTask<String, String, String>() {
             String responseData = new String();
 
@@ -27,7 +19,7 @@ public class ApiDao implements IApiDao {
                     responseData = Jsoup.connect("http://192.168.1.38:8080/doLoginWithMobile")
                             .userAgent("Mozilla")
                             .timeout(10000)
-                            .data("username", username)
+                            .data("userName", userName)
                             .data("password", password)
                             .ignoreContentType(true)
                             .post()
@@ -90,24 +82,6 @@ public class ApiDao implements IApiDao {
     }
 
     @Override
-    public void emitLoggingLocation(final String visitId) {
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    Jsoup.connect("http://192.168.1.38:8080/logVisitForMobile")
-                            .data("id", visitId)
-                            .post();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }.execute();
-    }
-
-    @Override
     public String fetchCategoriesData() throws Exception {
         return new AsyncTask<String, String, String>() {
             String responseData = new String();
@@ -148,4 +122,23 @@ public class ApiDao implements IApiDao {
             }
         }.execute().get();
     }
+
+    @Override
+    public void setLocationCheck(final String visitId) {
+        new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    Jsoup.connect("http://192.168.1.38:8080/logVisitForMobile")
+                            .data("id", visitId)
+                            .post();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
+    }
+
 }

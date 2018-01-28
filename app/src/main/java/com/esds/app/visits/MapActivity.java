@@ -13,8 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.esds.app.R;
-import com.esds.app.service.IApiService;
-import com.esds.app.service.impl.ApiService;
+import com.esds.app.service.RestService;
+import com.esds.app.service.impl.RestServiceImpl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,7 +28,7 @@ import org.json.JSONArray;
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap map;
-    IApiService apiService = new ApiService();
+    RestService apiService = new RestServiceImpl();
 
     private LocationManager locationManager;
     private boolean isGpsOpen = false;
@@ -50,7 +50,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
         map.getUiSettings().setZoomControlsEnabled(true);
-        apiService = new ApiService();
+        apiService = new RestServiceImpl();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         String visitId = getIntent().getExtras().getString("id");
@@ -110,7 +110,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 destination.setLongitude(destinationLng);
 
                 if(location.distanceTo(destination) < 100){
-                    apiService.prepareLoggingLocation(visitId);
+                    apiService.setLocationCheck(visitId);
                 }
             }
 
@@ -132,7 +132,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void drawDirection(final double originLat, final double originLng, final double destinationLat, final double destinationLng) {
         try {
-            JSONArray steps = apiService.prepareDirectionData(originLat, originLng, destinationLat, destinationLng);
+            JSONArray steps = apiService.fetchDirectionData(originLat, originLng, destinationLat, destinationLng);
             for (int i = 0; i < steps.length(); i++) {
                 double startLat = Double.parseDouble(steps.getJSONObject(i).getJSONObject("start_location").get("lat").toString());
                 double startLng = Double.parseDouble(steps.getJSONObject(i).getJSONObject("start_location").get("lng").toString());
