@@ -1,20 +1,18 @@
 package com.esds.app.service;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import com.esds.app.properties.Request;
 
-import java.util.concurrent.ExecutionException;
+import org.json.JSONArray;
+
+import java.util.HashMap;
 
 public interface RestService {
-    String fetchLoginData(String username, String password) throws Exception;
 
-    JSONArray fetchDirectionData(final double originLatitude, final double originLongitude, final double destinationLatitude, final double destinationLongitude) throws Exception;
+    String fetchLoginData(final String url, final HashMap<String, String> dataSet, Request request) throws Exception;
 
-    JSONArray fetchVisitsData(String username) throws Exception;
+    JSONArray fetch(final String url, final HashMap<String, String> dataSet, Request request) throws Exception;
 
-    void setLocationCheck(String visitId);
+    JSONArray fetchDirectionData(String url, HashMap<String, String> dataSet, Request request) throws Exception;
 
-    JSONArray fetchCategoriesData() throws Exception;
-
-    JSONArray fetchProductsData(int id) throws Exception;
+    void affect(final String url, final HashMap<String, String> dataSet, Request request) throws Exception;
 }

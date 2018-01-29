@@ -2,28 +2,36 @@ package com.esds.app.dao.impl;
 
 import android.os.AsyncTask;
 
+import com.esds.app.properties.Request;
 import com.esds.app.dao.RestDao;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class RestDaoImpl implements RestDao {
 
     @Override
-    public String fetchLoginData(final String userName, final String password) throws Exception {
+    public String fetch(final String url, final HashMap<String, String> dataSet, final Request request) throws Exception {
         return new AsyncTask<String, String, String>() {
             String responseData = new String();
+            Iterator<String> iterator = dataSet.keySet().iterator();
 
             @Override
             protected String doInBackground(String... strings) {
                 try {
-                    responseData = Jsoup.connect("http://192.168.1.38:8080/doLoginWithMobile")
-                            .userAgent("Mozilla")
-                            .timeout(10000)
-                            .data("userName", userName)
-                            .data("password", password)
-                            .ignoreContentType(true)
-                            .post()
-                            .text();
+                    Connection connection = Jsoup.connect(url).timeout(1000);
+                    while (iterator.hasNext()) {
+                        String key = iterator.next();
+                        String value = dataSet.get(key);
+                        connection = jsoupHelper(connection, key, value);
+                    }
+                    if (request.equals(Request.GET))
+                        responseData = connection.ignoreContentType(true).get().text();
+                    else if (request.equals(Request.POST))
+                        responseData = connection.ignoreContentType(true).post().text();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -35,110 +43,32 @@ public class RestDaoImpl implements RestDao {
     }
 
     @Override
-    public String fetchVisitsData(final String username) throws Exception {
-        return new AsyncTask<String, String, String>() {
-            String responseData = new String();
+    public void affect(final String url, final HashMap<String, String> dataSet, Request request) throws Exception {
+        new AsyncTask<String, String, String>() {
+            Iterator<String> iterator = dataSet.keySet().iterator();
 
             @Override
             protected String doInBackground(String... strings) {
                 try {
-                    responseData = Jsoup.connect("http://192.168.1.38:8080/getVisitsForMobile")
-                            .data("username", username)
-                            .ignoreContentType(true)
-                            .post()
-                            .text();
+                    Connection connection = Jsoup.connect(url).timeout(1000).ignoreContentType(true);
+                    while (iterator.hasNext()) {
+                        String key = iterator.next();
+                        String value = dataSet.get(iterator);
+                        connection = jsoupHelper(connection, key, value);
+                    }
+                    connection.post().text();
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                return responseData;
-            }
-        }.execute().get();
-    }
-
-    @Override
-    public String fetchDirectionData(final double originLatitude, final double originLongitude, final double destinationLatitude, final double destinationLongitude) throws Exception {
-        return new AsyncTask<String, String, String>() {
-            String responseData = new String();
-
-            @Override
-            protected String doInBackground(String... strings) {
-                try {
-                    responseData = Jsoup.connect("https://maps.googleapis.com/maps/api/directions/json")
-                            .data("origin", originLatitude + "," + originLongitude)
-                            .data("destination", destinationLatitude + "," + destinationLongitude)
-                            .data("key", "AIzaSyAM2aowp1v_SyqM4sI3WT5Z25AU6wnX5IM")
-                            .ignoreContentType(true)
-                            .get()
-                            .text();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                return responseData;
-            }
-        }.execute().get();
-    }
-
-    @Override
-    public String fetchCategoriesData() throws Exception {
-        return new AsyncTask<String, String, String>() {
-            String responseData = new String();
-
-            @Override
-            protected String doInBackground(String... strings) {
-                try {
-                    responseData = Jsoup.connect("http://192.168.1.38:8080/getCategoriesForMobile")
-                            .ignoreContentType(true)
-                            .post()
-                            .text();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                return responseData;
-            }
-        }.execute().get();
-    }
-
-    @Override
-    public String fetchProductsData(final int id) throws Exception {
-        return new AsyncTask<String, String, String>() {
-            String responseData = new String();
-
-            @Override
-            protected String doInBackground(String... strings) {
-                try {
-                    responseData = Jsoup.connect("http://192.168.1.38:8080/getProductsForMobile")
-                            .data("id", id + "")
-                            .ignoreContentType(true)
-                            .post()
-                            .text();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return responseData;
-            }
-        }.execute().get();
-    }
-
-    @Override
-    public void setLocationCheck(final String visitId) {
-        new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    Jsoup.connect("http://192.168.1.38:8080/logVisitForMobile")
-                            .data("id", visitId)
-                            .post();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
                 return null;
             }
         }.execute();
+    }
+
+    private Connection jsoupHelper(Connection connection, String key, String value) {
+        connection = connection.data(key, value);
+        return connection;
     }
 
 }

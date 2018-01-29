@@ -24,12 +24,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.esds.app.R;
+import com.esds.app.properties.Request;
 import com.esds.app.service.RestService;
 import com.esds.app.service.impl.RestServiceImpl;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class ProductsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
 
@@ -72,7 +75,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
 
         try {
-            products = apiService.fetchProductsData(0);
+            products = apiService.fetch("http://192.168.1.38:8080/getProductsForMobile", new HashMap<String, String>(), Request.POST);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,10 +106,9 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
                 try {
                     JSONObject visitItem = products.getJSONObject(i);
                     int productid = Integer.parseInt(visitItem.getString("id"));
-                    // String productCatId = visitItem.getString("category_id");
                     String productName = visitItem.getString("name");
                     String productPrice = visitItem.getString("price");
-                    String imgLink = visitItem.getString("img_link");
+                    String imgLink = visitItem.getString("imgLink");
 
                     ImageView imageView = view.findViewById(R.id.product_img);
                     Picasso.with(ProductsActivity.this).load(imgLink).into(imageView);
@@ -170,7 +172,9 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
 
         try {
-            products = apiService.fetchProductsData(id);
+            HashMap<String, String> dataSet = new HashMap<>();
+            dataSet.put("id", id + "");
+            products = apiService.fetch("http://192.168.1.38:8080/getProductsByCategoryForMobile", dataSet, Request.POST);
             baseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
@@ -183,7 +187,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
 
     private void getCategories(SubMenu menuGroup) {
         try {
-            categories = apiService.fetchCategoriesData();
+            categories = apiService.fetch("http://192.168.1.38:8080/getCategoriesForMobile", new HashMap<String, String>(), Request.POST);
             for (int i = 0; i < categories.length(); i++) {
                 JSONObject category = categories.getJSONObject(i);
                 CharSequence itemName = category.getString("name");

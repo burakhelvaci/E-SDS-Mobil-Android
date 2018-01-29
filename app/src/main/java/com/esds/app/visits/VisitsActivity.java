@@ -12,11 +12,14 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.esds.app.R;
+import com.esds.app.properties.Request;
 import com.esds.app.service.RestService;
 import com.esds.app.service.impl.RestServiceImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class VisitsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -27,7 +30,7 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
     LayoutInflater layoutInflater;
     SwipeRefreshLayout swipeRefreshLayout;
     ListView listView;
-    String username;
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,7 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
 
         apiService = new RestServiceImpl();
 
-        username = getIntent().getExtras().getString("username");
+        userName = getIntent().getExtras().getString("userName");
         listView = findViewById(R.id.visit_listview);
         layoutInflater = LayoutInflater.from(VisitsActivity.this);
 
@@ -45,7 +48,9 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public void onRefresh() {
                 try {
-                    visitArr = apiService.fetchVisitsData(username);
+                    HashMap<String, String> dataSet = new HashMap<>();
+                    dataSet.put("userName", userName);
+                    visitArr = apiService.fetch("http://192.168.1.38:8080/getVisitsForMobile", dataSet, Request.POST);
                     baseAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -80,8 +85,8 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
 
                 try {
                     JSONObject visitItem = visitArr.getJSONObject(i);
-                    String customerName = visitItem.getString("name");
-                    String visitDate = visitItem.getString("visit_date");
+                    String customerName = visitItem.getJSONObject("customer").getString("name");
+                    String visitDate = visitItem.getString("visitDate");
 
                     TextView tvName = view.findViewById(R.id.customer_name);
                     tvName.setText(customerName);
@@ -101,7 +106,9 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
         listView.setOnItemClickListener(this);
 
         try {
-            visitArr = apiService.fetchVisitsData(username);
+            HashMap<String, String> dataSet = new HashMap<>();
+            dataSet.put("userName", userName);
+            visitArr = apiService.fetch("http://192.168.1.38:8080/getVisitsForMobile", dataSet, Request.POST);
             baseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,11 +119,11 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         try {
             JSONObject visitItem = visitArr.getJSONObject(i);
-            String customerName = visitItem.getString("name");
-            String customerPhoneNumber = visitItem.getString("phone_number");
-            String customerLocation = visitItem.getString("location");
-            String customerAddres = visitItem.getString("address");
-            String visitDate = visitItem.getString("visit_date");
+            String customerName = visitItem.getJSONObject("customer").getString("name");
+            String customerPhoneNumber = visitItem.getJSONObject("customer").getString("phoneNumber");
+            String customerLocation = visitItem.getJSONObject("customer").getString("location");
+            String customerAddres = visitItem.getJSONObject("customer").getString("address");
+            String visitDate = visitItem.getString("visitDate");
             String id = visitItem.getString("id");
 
             Intent intent = new Intent(VisitsActivity.this, VisitDetailActivity.class);

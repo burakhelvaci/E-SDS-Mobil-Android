@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.esds.app.R;
+import com.esds.app.properties.Request;
 import com.esds.app.service.RestService;
 import com.esds.app.service.impl.RestServiceImpl;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,7 +23,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
 import org.json.JSONArray;
+
+import java.util.HashMap;
 
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -109,8 +113,14 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 destination.setLatitude(destinationLat);
                 destination.setLongitude(destinationLng);
 
-                if(location.distanceTo(destination) < 100){
-                    apiService.setLocationCheck(visitId);
+                if (location.distanceTo(destination) < 100) {
+                    HashMap<String, String> dataSet = new HashMap<>();
+                    dataSet.put("id", visitId);
+                    try {
+                        apiService.affect("http://192.168.1.38:8080/logVisitForMobile", dataSet, Request.POST);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -132,7 +142,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private void drawDirection(final double originLat, final double originLng, final double destinationLat, final double destinationLng) {
         try {
-            JSONArray steps = apiService.fetchDirectionData(originLat, originLng, destinationLat, destinationLng);
+            HashMap<String, String> dataSet = new HashMap<>();
+            dataSet.put("origin", originLat + "," + originLng);
+            dataSet.put("destination", destinationLat + "," + destinationLng);
+            dataSet.put("key", "AIzaSyAM2aowp1v_SyqM4sI3WT5Z25AU6wnX5IM");
+            JSONArray steps = apiService.fetchDirectionData("https://maps.googleapis.com/maps/api/directions/json", dataSet,Request.GET);
             for (int i = 0; i < steps.length(); i++) {
                 double startLat = Double.parseDouble(steps.getJSONObject(i).getJSONObject("start_location").get("lat").toString());
                 double startLng = Double.parseDouble(steps.getJSONObject(i).getJSONObject("start_location").get("lng").toString());

@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.esds.app.properties.Request;
 import com.esds.app.service.RestService;
 import com.esds.app.service.impl.RestServiceImpl;
+
+import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,14 +30,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void doLogin(View view) {
-        final String username = un.getText().toString().trim();
+        final String userName = un.getText().toString().trim();
         final String password = pw.getText().toString();
 
         try {
-            String responseData = apiService.fetchLoginData(username, password);
+            HashMap<String, String> dataSet = new HashMap<>();
+            dataSet.put("userName", userName);
+            dataSet.put("password", password);
+            String responseData = apiService.fetchLoginData("http://192.168.1.38:8080/doLoginWithMobile", dataSet, Request.POST);
+
             if (responseData.equals("true")) {
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                intent.putExtra("username", username);
+                intent.putExtra("userName", userName);
                 startActivity(intent);
             } else {
                 Toast.makeText(LoginActivity.this, "Hatalı Kullanıcı Adı veya Parola", Toast.LENGTH_LONG).show();

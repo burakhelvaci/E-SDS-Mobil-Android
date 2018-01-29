@@ -11,19 +11,19 @@ import com.esds.app.visits.VisitsActivity;
 
 public class HomeActivity extends AppCompatActivity {
 
-    String username;
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        username = getIntent().getExtras().getString("username");
+        userName = getIntent().getExtras().getString("userName");
     }
 
     public void visits(View view) {
         Intent intent = new Intent(HomeActivity.this, VisitsActivity.class);
-        intent.putExtra("username", username);
+        intent.putExtra("userName", userName);
         startActivity(intent);
     }
 
