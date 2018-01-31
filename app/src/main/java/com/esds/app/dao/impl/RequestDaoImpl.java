@@ -1,9 +1,10 @@
 package com.esds.app.dao.impl;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
-import com.esds.app.properties.Request;
-import com.esds.app.dao.RestDao;
+import com.esds.app.dao.RequestDao;
+import com.esds.app.enums.Request;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -11,7 +12,7 @@ import org.jsoup.Jsoup;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class RestDaoImpl implements RestDao {
+public class RequestDaoImpl implements RequestDao {
 
     @Override
     public String fetch(final String url, final HashMap<String, String> dataSet, final Request request) throws Exception {
@@ -43,7 +44,7 @@ public class RestDaoImpl implements RestDao {
     }
 
     @Override
-    public void affect(final String url, final HashMap<String, String> dataSet, Request request) throws Exception {
+    public void affect(final String url, final HashMap<String, String> dataSet, final Request request) throws Exception {
         new AsyncTask<String, String, String>() {
             Iterator<String> iterator = dataSet.keySet().iterator();
 
@@ -53,10 +54,14 @@ public class RestDaoImpl implements RestDao {
                     Connection connection = Jsoup.connect(url).timeout(1000).ignoreContentType(true);
                     while (iterator.hasNext()) {
                         String key = iterator.next();
-                        String value = dataSet.get(iterator);
+                        String value = dataSet.get(key);
                         connection = jsoupHelper(connection, key, value);
                     }
-                    connection.post().text();
+
+                    if(request.equals(Request.GET))
+                        connection.get();
+                    else if (request.equals(Request.POST))
+                        connection.post();
 
                 } catch (Exception e) {
                     e.printStackTrace();

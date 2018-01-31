@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/product_image_in_item_cart"
+        android:src="@drawable/product"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginVertical="5dp"/>
+
+    <LinearLayout
+        android:layout_marginLeft="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginVertical="5dp">
+
+        <TextView
+            android:layout_marginTop="2dp"
+            android:id="@+id/product_name_in_item_cart"
+            android:text="ASUS ROG MAXIMUS X HERO Intel Z370 Socket 1151 DDR4 4133+Mhz(OC) USB3.1 Anakart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="2"
+            android:textColor="#215772"
+            android:textStyle="bold"
+             />
+
+        <LinearLayout
+            android:layout_marginTop="3dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="Adet                 :   "
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/product_count_in_item_cart"
+                android:text="100"
+                android:textStyle="bold"
+                android:textColor="#bf661e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="Birim Fiyat      :   "
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/product_price_in_item_cart"
+                android:text="164 TL"
+                android:textStyle="bold"
+                android:textColor="#bf661e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Toplam Fiyat  : "
+                android:textStyle="bold"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/product_total_price_in_item_cart"
+                android:text="164168 TL"
+                android:textStyle="bold"
+                android:textColor="#bf661e"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

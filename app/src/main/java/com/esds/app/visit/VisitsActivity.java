@@ -1,9 +1,10 @@
-package com.esds.app.visits;
+package com.esds.app.visit;
 
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.esds.app.R;
-import com.esds.app.properties.Request;
-import com.esds.app.service.RestService;
-import com.esds.app.service.impl.RestServiceImpl;
+import com.esds.app.enums.Request;
+import com.esds.app.service.RequestService;
+import com.esds.app.service.impl.RequestServiceImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,26 +24,33 @@ import java.util.HashMap;
 
 public class VisitsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
-    RestService apiService;
+    private String hostName;
 
-    JSONArray visitArr = new JSONArray();
-    BaseAdapter baseAdapter;
-    LayoutInflater layoutInflater;
-    SwipeRefreshLayout swipeRefreshLayout;
-    ListView listView;
-    String userName;
+    private RequestService requestService;
+
+    private JSONArray visitJSONArray = new JSONArray();
+    private String userName;
+
+    private BaseAdapter visitBaseAdapter;
+    private LayoutInflater visitLayoutInflater;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ListView visitListView;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_visits);
 
-        apiService = new RestServiceImpl();
+        hostName = getString(R.string.host_name);
+
+        requestService = new RequestServiceImpl();
 
         userName = getIntent().getExtras().getString("userName");
-        listView = findViewById(R.id.visit_listview);
-        layoutInflater = LayoutInflater.from(VisitsActivity.this);
-
+        visitListView = findViewById(R.id.visit_list_view);
+        visitLayoutInflater = LayoutInflater.from(VisitsActivity.this);
         swipeRefreshLayout = findViewById(R.id.srl_visits);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -50,8 +58,8 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
                 try {
                     HashMap<String, String> dataSet = new HashMap<>();
                     dataSet.put("userName", userName);
-                    visitArr = apiService.fetch("http://192.168.1.38:8080/getVisitsForMobile", dataSet, Request.POST);
-                    baseAdapter.notifyDataSetChanged();
+                    visitJSONArray = requestService.fetch(hostName + "/getVisitsForMobile", dataSet, Request.POST);
+                    visitBaseAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -61,10 +69,10 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
             }
         });
 
-        baseAdapter = new BaseAdapter() {
+        visitBaseAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
-                return visitArr.length();
+                return visitJSONArray.length();
             }
 
             @Override
@@ -80,18 +88,18 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 if (view == null){
-                    view = layoutInflater.inflate(R.layout.item_visits, null);
+                    view = visitLayoutInflater.inflate(android.R.layout.simple_list_item_2, null);
                 }
 
                 try {
-                    JSONObject visitItem = visitArr.getJSONObject(i);
+                    JSONObject visitItem = visitJSONArray.getJSONObject(i);
                     String customerName = visitItem.getJSONObject("customer").getString("name");
                     String visitDate = visitItem.getString("visitDate");
 
-                    TextView tvName = view.findViewById(R.id.customer_name);
+                    TextView tvName = view.findViewById(android.R.id.text1);
                     tvName.setText(customerName);
 
-                    TextView tvDate = view.findViewById(R.id.visit_date);
+                    TextView tvDate = view.findViewById(android.R.id.text2);
                     tvDate.setText(visitDate);
 
                 } catch (Exception e) {
@@ -102,14 +110,14 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
             }
         };
 
-        listView.setAdapter(baseAdapter);
-        listView.setOnItemClickListener(this);
+        visitListView.setAdapter(visitBaseAdapter);
+        visitListView.setOnItemClickListener(VisitsActivity.this);
 
         try {
             HashMap<String, String> dataSet = new HashMap<>();
             dataSet.put("userName", userName);
-            visitArr = apiService.fetch("http://192.168.1.38:8080/getVisitsForMobile", dataSet, Request.POST);
-            baseAdapter.notifyDataSetChanged();
+            visitJSONArray = requestService.fetch(hostName + "/getVisitsForMobile", dataSet, Request.POST);
+            visitBaseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,21 +126,23 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         try {
-            JSONObject visitItem = visitArr.getJSONObject(i);
+            JSONObject visitItem = visitJSONArray.getJSONObject(i);
+            int visitId = visitItem.getInt("id");
+            String visitDate = visitItem.getString("visitDate");
             String customerName = visitItem.getJSONObject("customer").getString("name");
             String customerPhoneNumber = visitItem.getJSONObject("customer").getString("phoneNumber");
             String customerLocation = visitItem.getJSONObject("customer").getString("location");
-            String customerAddres = visitItem.getJSONObject("customer").getString("address");
-            String visitDate = visitItem.getString("visitDate");
-            String id = visitItem.getString("id");
+            String customerAddress = visitItem.getJSONObject("customer").getString("address");
+
+
 
             Intent intent = new Intent(VisitsActivity.this, VisitDetailActivity.class);
+            intent.putExtra("visitId", visitId);
+            intent.putExtra("visitDate", visitDate);
             intent.putExtra("customerName", customerName);
             intent.putExtra("customerPhoneNumber", customerPhoneNumber);
             intent.putExtra("customerLocation", customerLocation);
-            intent.putExtra("customerAddres", customerAddres);
-            intent.putExtra("visitDate", visitDate);
-            intent.putExtra("id", id);
+            intent.putExtra("customerAddress", customerAddress);
 
             startActivity(intent);
         } catch (JSONException e) {

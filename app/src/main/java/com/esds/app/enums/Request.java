@@ -1,4 +1,4 @@
-package com.esds.app.properties;
+package com.esds.app.enums;
 
 public enum Request {
     GET("GET"),

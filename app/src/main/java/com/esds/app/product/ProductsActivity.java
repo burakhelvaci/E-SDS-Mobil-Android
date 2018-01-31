@@ -1,10 +1,13 @@
-package com.esds.app.products;
+package com.esds.app.product;
 
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SubMenu;
 import android.view.View;
@@ -21,12 +24,15 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.esds.app.R;
-import com.esds.app.properties.Request;
-import com.esds.app.service.RestService;
-import com.esds.app.service.impl.RestServiceImpl;
+import com.esds.app.dao.EsdsDatabase;
+import com.esds.app.model.Cart;
+import com.esds.app.enums.Request;
+import com.esds.app.service.RequestService;
+import com.esds.app.service.impl.RequestServiceImpl;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -36,13 +42,19 @@ import java.util.HashMap;
 
 public class ProductsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemClickListener {
 
-    RestService apiService;
-    JSONArray categories = new JSONArray();
-    JSONArray products = new JSONArray();
+    private String hostName;
 
-    BaseAdapter baseAdapter;
-    LayoutInflater layoutInflater;
-    ListView listView;
+    private RequestService requestService;
+    private EsdsDatabase esdsDatabase;
+
+    private JSONArray categoryJSONArray = new JSONArray();
+    private JSONArray productJSONArray = new JSONArray();
+    private HashMap<Integer, Cart> cartsElemenets = new HashMap<>();
+    private int visitId;
+
+    private BaseAdapter productBaseAdapter;
+    private LayoutInflater productLayoutInflater;
+    private ListView productListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +63,24 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        apiService = new RestServiceImpl();
+        hostName = getString(R.string.host_name);
+
+        requestService = new RequestServiceImpl();
+        esdsDatabase = Room.databaseBuilder(getApplicationContext(), EsdsDatabase.class, "cart").fallbackToDestructiveMigration().build();
+        visitId = getIntent().getExtras().getInt("visitId");
 
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
         Menu sideMenu = navView.getMenu();
         SubMenu menuGroup = sideMenu.addSubMenu("KATEGORILER");
         getCategories(menuGroup);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.fab_open_cart);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                Intent intent = new Intent(ProductsActivity.this, CartActivity.class);
+                intent.putExtra("visitId", visitId);
+                startActivity(intent);
             }
         });
 
@@ -75,22 +93,24 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
 
         try {
-            products = apiService.fetch("http://192.168.1.38:8080/getProductsForMobile", new HashMap<String, String>(), Request.POST);
+            productJSONArray = requestService.fetch(hostName + "/getProductsForMobile", new HashMap<String, String>(), Request.POST);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        listView = findViewById(R.id.product_list);
-        layoutInflater = LayoutInflater.from(ProductsActivity.this);
+        productListView = findViewById(R.id.product_list_view);
+        productLayoutInflater = LayoutInflater.from(ProductsActivity.this);
 
-        baseAdapter = new BaseAdapter() {
+        productBaseAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
-                return products.length();
+                return productJSONArray.length();
             }
 
             @Override
-            public Object getItem(int i) { return null; }
+            public Object getItem(int i) {
+                return null;
+            }
 
             @Override
             public long getItemId(int i) {
@@ -100,26 +120,33 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
             @Override
             public View getView(int i, View view, ViewGroup viewGroup) {
                 if (view == null) {
-                    view = layoutInflater.inflate(R.layout.item_product, null);
+                    view = productLayoutInflater.inflate(R.layout.item_product, null);
                 }
 
                 try {
-                    JSONObject visitItem = products.getJSONObject(i);
-                    int productid = Integer.parseInt(visitItem.getString("id"));
+                    JSONObject visitItem = productJSONArray.getJSONObject(i);
+
+                    int productId = Integer.parseInt(visitItem.getString("id"));
                     String productName = visitItem.getString("name");
-                    String productPrice = visitItem.getString("price");
+                    double productPrice = visitItem.getDouble("price");
                     String imgLink = visitItem.getString("imgLink");
 
-                    ImageView imageView = view.findViewById(R.id.product_img);
-                    Picasso.with(ProductsActivity.this).load(imgLink).into(imageView);
+                    ImageView ProductImageImageView = view.findViewById(R.id.product_image_in_item_product);
+                    TextView productNameTextView = view.findViewById(R.id.product_name_in_item_product);
+                    TextView productPriceTextView = view.findViewById(R.id.product_price_in_item_product);
 
-                    TextView tvName = view.findViewById(R.id.product_name);
-                    tvName.setText(productName);
+                    Picasso.with(ProductsActivity.this).load(imgLink).into(ProductImageImageView);
+                    productNameTextView.setText(productName);
+                    productPriceTextView.setText(productPrice + " TL");
 
-                    TextView tvPrice = view.findViewById(R.id.product_price);
-                    tvPrice.setText(productPrice + " TL");
+                    Cart cart = new Cart();
+                    cart.setProductId(productId);
+                    cart.setProductName(productName);
+                    cart.setProductPrice(productPrice);
+                    cart.setProductImgLink(imgLink);
+                    cartsElemenets.put(cart.getProductId(), cart);
 
-                    view.setId(productid);
+                    view.setId(productId);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -129,8 +156,8 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
             }
         };
 
-        listView.setAdapter(baseAdapter);
-        listView.setOnItemClickListener(this);
+        productListView.setAdapter(productBaseAdapter);
+        productListView.setOnItemClickListener(this);
     }
 
     @Override
@@ -153,12 +180,8 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -174,8 +197,8 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         try {
             HashMap<String, String> dataSet = new HashMap<>();
             dataSet.put("id", id + "");
-            products = apiService.fetch("http://192.168.1.38:8080/getProductsByCategoryForMobile", dataSet, Request.POST);
-            baseAdapter.notifyDataSetChanged();
+            productJSONArray = requestService.fetch(hostName + "/getProductsByCategoryForMobile", dataSet, Request.POST);
+            productBaseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -187,9 +210,9 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
 
     private void getCategories(SubMenu menuGroup) {
         try {
-            categories = apiService.fetch("http://192.168.1.38:8080/getCategoriesForMobile", new HashMap<String, String>(), Request.POST);
-            for (int i = 0; i < categories.length(); i++) {
-                JSONObject category = categories.getJSONObject(i);
+            categoryJSONArray = requestService.fetch(hostName + "/getCategoriesForMobile", new HashMap<String, String>(), Request.POST);
+            for (int i = 0; i < categoryJSONArray.length(); i++) {
+                JSONObject category = categoryJSONArray.getJSONObject(i);
                 CharSequence itemName = category.getString("name");
                 int itemId = Integer.parseInt(category.getString("id"));
 
@@ -203,19 +226,36 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
     @Override
     public void onItemClick(AdapterView<?> adapterView, final View view, int i, long l) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Ürün Sepete Eklensin mi?");
+        builder.setTitle("Sepete Ekle");
 
-        builder.setPositiveButton("Evet", new DialogInterface.OnClickListener() {
+        View viewDialog = LayoutInflater.from(this).inflate(R.layout.add_cart_dialog, null);
+        builder.setView(viewDialog);
+        final NumberPicker addCartDialogNumberPicker = (NumberPicker) viewDialog.findViewById(R.id.number_picker_in_add_cart_dialog);
+        addCartDialogNumberPicker.setWrapSelectorWheel(true);
+        addCartDialogNumberPicker.setMinValue(1);
+        addCartDialogNumberPicker.setMaxValue(999);
+
+        builder.setPositiveButton("Ekle", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                addtoChart(view.getId());
+                int count = addCartDialogNumberPicker.getValue();
+                addtoChart(view.getId(), count);
                 dialog.dismiss();
             }
         });
-        builder.setNegativeButton("Hayır", null);
+        builder.setNegativeButton("İptal", null);
         builder.show();
     }
 
-    private void addtoChart(int id) {
-
+    private void addtoChart(final int id, final int count) {
+        new AsyncTask<String, String, String>() {
+            @Override
+            protected String doInBackground(String... strings) {
+                Cart cart = cartsElemenets.get(id);
+                cart.setProductCount(count);
+                cart.setVisitId(visitId);
+                esdsDatabase.cartDao().insert(cart);
+                return null;
+            }
+        }.execute();
     }
 }

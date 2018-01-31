@@ -1,4 +1,4 @@
-package com.esds.app.visits;
+package com.esds.app.map;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -13,9 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.esds.app.R;
-import com.esds.app.properties.Request;
-import com.esds.app.service.RestService;
-import com.esds.app.service.impl.RestServiceImpl;
+import com.esds.app.enums.Request;
+import com.esds.app.service.RequestService;
+import com.esds.app.service.impl.RequestServiceImpl;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -28,11 +28,12 @@ import org.json.JSONArray;
 
 import java.util.HashMap;
 
-
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    String hostName;
+
     private GoogleMap map;
-    RestService apiService = new RestServiceImpl();
+    RequestService requestService = new RequestServiceImpl();
 
     private LocationManager locationManager;
     private boolean isGpsOpen = false;
@@ -49,14 +50,20 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(MapActivity.this);
     }
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.map = googleMap;
+        hostName = getString(R.string.host_name);
+
         map.getUiSettings().setZoomControlsEnabled(true);
-        apiService = new RestServiceImpl();
+        requestService = new RequestServiceImpl();
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        mapInitializer();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void mapInitializer(){
         String visitId = getIntent().getExtras().getString("id");
         String customerName = getIntent().getExtras().getString("customerName");
         String[] customerLocation = getIntent().getExtras().getString("customerLocation").split(",");
@@ -83,7 +90,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         switch (requestCode) {
             case LOCATION_REQUEST:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    map.setMyLocationEnabled(true);
+                    mapInitializer();
                 } else {
                     map.setMyLocationEnabled(false);
                 }
@@ -97,14 +104,13 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
         if (isGpsOpen && isNetworkOpen) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_REQUEST);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST);
                 return;
             }
             map.setMyLocationEnabled(true);
         }
     }
 
-    @SuppressLint("MissingPermission")
     private Location initLocationListener(final String visitId, final Double destinationLat, final Double destinationLng) {
         final LocationListener locationListener = new LocationListener() {
             @Override
@@ -117,7 +123,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     HashMap<String, String> dataSet = new HashMap<>();
                     dataSet.put("id", visitId);
                     try {
-                        apiService.affect("http://192.168.1.38:8080/logVisitForMobile", dataSet, Request.POST);
+                        requestService.affect(hostName + "/logVisitForMobile", dataSet, Request.POST);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -136,6 +142,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             public void onProviderDisabled(String s) {
             }
         };
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return null;
+        }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 100, locationListener);
         return locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
@@ -145,8 +154,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
             HashMap<String, String> dataSet = new HashMap<>();
             dataSet.put("origin", originLat + "," + originLng);
             dataSet.put("destination", destinationLat + "," + destinationLng);
-            dataSet.put("key", "AIzaSyAM2aowp1v_SyqM4sI3WT5Z25AU6wnX5IM");
-            JSONArray steps = apiService.fetchDirectionData("https://maps.googleapis.com/maps/api/directions/json", dataSet,Request.GET);
+            dataSet.put("key", getString(R.string.google_maps_key));
+            JSONArray steps = requestService.fetchDirectionData("https://maps.googleapis.com/maps/api/directions/json", dataSet,Request.GET);
             for (int i = 0; i < steps.length(); i++) {
                 double startLat = Double.parseDouble(steps.getJSONObject(i).getJSONObject("start_location").get("lat").toString());
                 double startLng = Double.parseDouble(steps.getJSONObject(i).getJSONObject("start_location").get("lng").toString());

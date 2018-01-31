@@ -13,19 +13,20 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+        android:theme="@style/AppTheme"
+        android:largeHeap="true">
+        <activity android:launchMode="singleTask" android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomeActivity" />
-        <activity android:name=".visits.VisitsActivity" />
-        <activity android:name=".orders.OrdersActivity" />
-        <activity android:name=".chat.ChatActivity" />
-        <activity android:name=".visits.VisitDetailActivity" />
+        <activity android:launchMode="singleTask" android:name=".HomeActivity" />
+        <activity android:launchMode="singleTask" android:name=".visit.VisitsActivity" />
+        <activity android:launchMode="singleTask" android:name=".orders.OrdersActivity" />
+        <activity android:launchMode="singleTask" android:name=".chat.ChatActivity" />
+        <activity android:launchMode="singleTask" android:name=".visit.VisitDetailActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -38,11 +39,12 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".visits.MapActivity" />
+        <activity android:name=".map.MapActivity" />
         <activity
-            android:name=".products.ProductsActivity"
+            android:name=".product.ProductsActivity"
             android:label="@string/title_activity_products"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".product.CartActivity"></activity>
     </application>
 
 </manifest>

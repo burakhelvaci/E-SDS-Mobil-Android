@@ -6,12 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import com.esds.app.chat.ChatActivity;
 import com.esds.app.orders.OrdersActivity;
-import com.esds.app.products.ProductsActivity;
-import com.esds.app.visits.VisitsActivity;
+import com.esds.app.product.ProductsActivity;
+import com.esds.app.visit.VisitsActivity;
 
 public class HomeActivity extends AppCompatActivity {
 
-    String userName;
+    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

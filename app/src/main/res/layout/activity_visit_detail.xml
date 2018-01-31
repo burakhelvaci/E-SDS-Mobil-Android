@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.esds.app.visits.VisitDetailActivity"
+    tools:context="com.esds.app.visit.VisitDetailActivity"
     android:layout_marginHorizontal="25dp"
     android:layout_marginTop="25dp"
     android:layout_marginBottom="10dp">
@@ -21,12 +21,11 @@
         android:layout_marginBottom="5dp"/>
 
     <TextView
-        android:id="@+id/customer_detail_name"
+        android:id="@+id/customer_name_in_visit_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Burak Helvaci"
         android:textSize="18dp"
-        android:textStyle="italic"
         android:textColor="@color/colorPrimary"
         android:layout_marginBottom="15dp"/>
 
@@ -40,12 +39,11 @@
         android:layout_marginBottom="5dp"/>
 
     <TextView
-        android:id="@+id/customer_detail_phonenumber"
+        android:id="@+id/customer_phone_number_in_visit_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="+90 542 521 46 43"
         android:textSize="18dp"
-        android:textStyle="italic"
         android:textColor="#3276BC"
         android:textColorLink="@color/colorPrimary"
         android:layout_marginBottom="15dp"/>
@@ -60,37 +58,45 @@
         android:layout_marginBottom="5dp"/>
 
     <TextView
-        android:id="@+id/customer_detail_address"
+        android:id="@+id/customer_address_in_visit_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Bahçelievler/İstanbul"
         android:textSize="18dp"
-        android:textStyle="italic"
         android:textColor="#3276BC"
         android:layout_marginBottom="15dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ziyaret Edilmesi Gereken Tarih"
+        android:text="Ziyaret Tarihi"
         android:textSize="18dp"
         android:textStyle="bold"
         android:textColor="#4a4a4a"
         android:layout_marginBottom="5dp"/>
 
     <TextView
-        android:id="@+id/visit_detail_date"
+        android:id="@+id/visit_date_in_visit_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="05-02-2018"
         android:textSize="18dp"
-        android:textStyle="italic"
         android:textColor="@color/colorPrimary"
         android:layout_marginBottom="15dp"/>
 
     <Button
+        android:onClick="giveOrder"
+        android:layout_marginTop="40dp"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:backgroundTint="#f23561"
+        android:text="Sipariş Ekle"
+        android:textColor="#ffffff"/>
+
+    <Button
         android:onClick="makeCall"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="5dp"
         android:layout_width="160dp"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -107,6 +113,4 @@
         android:backgroundTint="#3276BC"
         android:text="Yol Tarifi Al"
         android:textColor="#ffffff"/>
-
-
 </LinearLayout>

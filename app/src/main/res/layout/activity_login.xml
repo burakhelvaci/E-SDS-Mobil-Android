@@ -28,7 +28,7 @@
         android:layout_height="wrap_content" />
 
     <EditText
-        android:id="@+id/edittext_un"
+        android:id="@+id/user_name_in_login"
         android:layout_marginTop="50dp"
         android:paddingHorizontal="15dp"
         android:hint="Kullanıcı Adı..."
@@ -39,7 +39,7 @@
         android:singleLine="true" />
 
     <EditText
-        android:id="@+id/edittext_pw"
+        android:id="@+id/password_in_login"
         android:layout_marginTop="15dp"
         android:paddingHorizontal="15dp"
         android:inputType="textPassword"
