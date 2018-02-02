@@ -6,53 +6,19 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
     tools:context="com.esds.app.HomeActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:background="#E8BD17"
-        android:gravity="center_horizontal">
-
-        <Button
-            android:layout_width="110dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="35dp"
-            android:layout_weight="1"
-            android:backgroundTintMode="src_atop"
-            android:backgroundTint="#ffffff"
-            android:background="@drawable/notifications" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#3276bc"
-            android:layout_marginRight="5dp">
-
-            <Button
-                android:onClick="visits"
-                android:layout_marginHorizontal="35dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="45dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/visits"
-                android:backgroundTint="#ffffff"
-                android:backgroundTintMode="src_in"/>
+            android:background="#f2742b">
 
             <TextView
                 android:layout_gravity="center|bottom"
@@ -60,37 +26,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="Ziyaretler"
-                android:textSize="18dp"
+                android:textSize="24dp"
                 android:textColor="#ffffff"/>
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#d9444b"
-            android:layout_marginLeft="5dp">
 
             <Button
-                android:onClick="products"
-                android:layout_marginHorizontal="35dp"
-                android:layout_marginTop="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="45dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="80dp"
+                android:layout_marginTop="25dp"
                 android:layout_weight="1"
-                android:background="@drawable/products"
+                android:background="@drawable/visits"
                 android:backgroundTint="#ffffff"
-                android:backgroundTintMode="src_in"/>
-
-            <TextView
-                android:layout_gravity="center|bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="Ürünler"
-                android:textSize="18dp"
-                android:textColor="#ffffff"/>
+                android:backgroundTintMode="src_in"
+                android:onClick="visits" />
         </FrameLayout>
     </LinearLayout>
 
@@ -98,19 +47,17 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#58b13d"
-            android:layout_marginRight="5dp">
+            android:background="#58b13d">
 
             <Button
                 android:onClick="chat"
-                android:layout_marginHorizontal="35dp"
+                android:layout_marginHorizontal="85dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="45dp"
                 android:layout_width="wrap_content"
@@ -126,39 +73,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="Mesajlar"
-                android:textSize="18dp"
+                android:textSize="24dp"
                 android:textColor="#ffffff"/>
         </FrameLayout>
 
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#83489a"
-            android:layout_marginLeft="5dp">
-
-            <Button
-                android:onClick="orders"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="45dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/orders"
-                android:backgroundTint="#ffffff"
-                android:backgroundTintMode="src_in"/>
-
-            <TextView
-                android:layout_gravity="center|bottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="Siparişler"
-                android:textSize="18dp"
-                android:textColor="#ffffff"/>
-        </FrameLayout>
     </LinearLayout>
 
 </LinearLayout>

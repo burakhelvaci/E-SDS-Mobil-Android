@@ -93,7 +93,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         navigationView.setNavigationItemSelectedListener(this);
 
         try {
-            productJSONArray = requestService.fetch(hostName + "/getProductsForMobile", new HashMap<String, String>(), Request.POST);
+            productJSONArray = requestService.fetch(hostName + "/api/product/getproducts", new HashMap<String, String>(), Request.POST);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -197,7 +197,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         try {
             HashMap<String, String> dataSet = new HashMap<>();
             dataSet.put("id", id + "");
-            productJSONArray = requestService.fetch(hostName + "/getProductsByCategoryForMobile", dataSet, Request.POST);
+            productJSONArray = requestService.fetch(hostName + "/api/product/getproductsbycategory", dataSet, Request.POST);
             productBaseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
@@ -210,7 +210,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
 
     private void getCategories(SubMenu menuGroup) {
         try {
-            categoryJSONArray = requestService.fetch(hostName + "/getCategoriesForMobile", new HashMap<String, String>(), Request.POST);
+            categoryJSONArray = requestService.fetch(hostName + "/api/category/getcategories", new HashMap<String, String>(), Request.POST);
             for (int i = 0; i < categoryJSONArray.length(); i++) {
                 JSONObject category = categoryJSONArray.getJSONObject(i);
                 CharSequence itemName = category.getString("name");

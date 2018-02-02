@@ -123,7 +123,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     HashMap<String, String> dataSet = new HashMap<>();
                     dataSet.put("id", visitId);
                     try {
-                        requestService.affect(hostName + "/logVisitForMobile", dataSet, Request.POST);
+                        requestService.affect(hostName + "/api/visit/logvisit", dataSet, Request.POST);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import com.esds.app.enums.Request;
 import com.esds.app.service.RequestService;
 import com.esds.app.service.impl.RequestServiceImpl;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -135,13 +138,30 @@ public class CartActivity extends AppCompatActivity implements AdapterView.OnIte
                 productDataSet.put("visit.id", visitId+"");
 
                 try {
-                    requestService.affect(hostName + "/insertOrdersFromMobile", productDataSet, Request.POST);
+                    requestService.affect(hostName + "/api/order/insertorder", productDataSet, Request.POST);
                     Toast.makeText(CartActivity.this, "Siparişler Kaydedildi", Toast.LENGTH_SHORT).show();
 
                     new AsyncTask<String, String, String>(){
                         @Override
                         protected void onPostExecute(String s) {
-                            cartBaseAdapter.notifyDataSetChanged();
+                            try {
+                                HashMap <String, String> orderDataSet = new HashMap<>();
+                                orderDataSet.put("visit.id", visitId + "");
+                                JSONArray orderJSONArray = requestService.fetch(hostName + "/api/order/getorders", orderDataSet, Request.POST);
+                                int orderId = orderJSONArray.getJSONObject(orderJSONArray.length()-1).getInt("id");
+                                Log.e("z", orderId +"");
+                                for(Cart cart : carts){
+                                    HashMap <String, String> orderDetailDataSet = new HashMap<>();
+                                    orderDetailDataSet.put("order.id", orderId + "");
+                                    orderDetailDataSet.put("product.id", cart.getProductId() + "");
+                                    orderDetailDataSet.put("productCount", cart.getProductCount() + "");
+                                    requestService.affect(hostName + "/api/orderdetail/insertorder", orderDetailDataSet, Request.POST);
+
+                                    cartBaseAdapter.notifyDataSetChanged();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         @Override

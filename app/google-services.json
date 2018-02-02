@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "965934048253",
+    "firebase_url": "https://esds-dd103.firebaseio.com",
+    "project_id": "esds-dd103",
+    "storage_bucket": "esds-dd103.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965934048253:android:0ec28c6492760db8",
+        "android_client_info": {
+          "package_name": "com.esds.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965934048253-edk5jlhqg0mcsqp3ge0cbkiijr5d2dbj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.esds.app",
+            "certificate_hash": "ad54e954bf611ba793d94f44b4aa05d99d1ee061"
+          }
+        },
+        {
+          "client_id": "965934048253-73j1ef2smndaob6q57etib1flg0inp22.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5x3kWYgWGv3tRkLUC5tiTmNUZ5w_GBbA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965934048253-73j1ef2smndaob6q57etib1flg0inp22.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

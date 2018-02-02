@@ -11,22 +11,31 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
-        <activity android:launchMode="singleTask" android:name=".LoginActivity">
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".LoginActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:launchMode="singleTask" android:name=".HomeActivity" />
-        <activity android:launchMode="singleTask" android:name=".visit.VisitsActivity" />
-        <activity android:launchMode="singleTask" android:name=".orders.OrdersActivity" />
-        <activity android:launchMode="singleTask" android:name=".chat.ChatActivity" />
-        <activity android:launchMode="singleTask" android:name=".visit.VisitDetailActivity" />
+        <activity
+            android:name=".HomeActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".visit.VisitsActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".messenger.MessengerActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".visit.VisitDetailActivity"
+            android:launchMode="singleTask" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -44,7 +53,22 @@
             android:name=".product.ProductsActivity"
             android:label="@string/title_activity_products"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".product.CartActivity"></activity>
+        <activity android:name=".product.CartActivity" />
+        <activity android:name=".messenger.MessageBoxActivity"></activity>
+
+        <service
+            android:name=".messenger.RegistrationService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".messenger.MessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

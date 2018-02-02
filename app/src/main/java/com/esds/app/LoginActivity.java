@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
             HashMap<String, String> dataSet = new HashMap<>();
             dataSet.put("userName", userName);
             dataSet.put("password", password);
-            String responseData = requestService.fetchLoginData(hostName + "/doLoginWithMobile", dataSet, Request.POST);
+            String responseData = requestService.fetchLoginData(hostName + "/api/login/dologin", dataSet, Request.POST);
 
             if (responseData.equals("true")) {
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
