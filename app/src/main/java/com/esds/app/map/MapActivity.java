@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.esds.app.R;
 import com.esds.app.enums.Request;
@@ -125,7 +126,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                     try {
                         requestService.affect(hostName + "/api/visit/logvisit", dataSet, Request.POST);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e("Error", "Exception Throwed", e);
                     }
                 }
             }
@@ -165,7 +166,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 map.addPolyline(new PolylineOptions().add(new LatLng(startLat, startLng), new LatLng(endLat, endLng)).width(8).color(Color.GREEN));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Error", "Exception Throwed", e);
         }
     }
 

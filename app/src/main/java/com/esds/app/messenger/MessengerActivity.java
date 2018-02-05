@@ -20,7 +20,9 @@ import com.esds.app.service.impl.RequestServiceImpl;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class MessengerActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -30,7 +32,7 @@ public class MessengerActivity extends AppCompatActivity implements AdapterView.
     private BaseAdapter messengerBaseAdapter;
     private SwipeRefreshLayout messengerSwipeRefreshLayout;
 
-    private String userNameIntent;
+    private JSONObject userJSONObject;
     private String hostName;
     private JSONArray jSONArray = new JSONArray();
     private JSONArray messengerJSONArray = new JSONArray();
@@ -42,10 +44,12 @@ public class MessengerActivity extends AppCompatActivity implements AdapterView.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messenger);
 
-        RegistrationService registrationService = new RegistrationService();
-
         hostName = getString(R.string.host_name);
-        userNameIntent = getIntent().getExtras().getString("userName");
+        try {
+            userJSONObject =  new JSONObject(getIntent().getExtras().getString("user"));
+        } catch (Exception e) {
+            Log.e("Error", "Exception Throwed", e);
+        }
 
         requestService = new RequestServiceImpl();
 
@@ -59,12 +63,12 @@ public class MessengerActivity extends AppCompatActivity implements AdapterView.
                     jSONArray = requestService.fetch(hostName + "/api/messenger/getusers", new HashMap<String, String>(), Request.POST);
                     messengerJSONArray = new JSONArray();
                     for (int i = 0; i < jSONArray.length(); i++) {
-                        if (!jSONArray.getJSONObject(i).getString("userName").equals(userNameIntent)) {
+                        if (!jSONArray.getJSONObject(i).getString("userName").equals(userJSONObject.getString("userName"))) {
                             messengerJSONArray.put(jSONArray.getJSONObject(i));
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("Error", "Exception Throwed", e);
                 } finally {
                     messengerBaseAdapter.notifyDataSetChanged();
                     messengerSwipeRefreshLayout.setRefreshing(false);
@@ -99,8 +103,8 @@ public class MessengerActivity extends AppCompatActivity implements AdapterView.
                     nameTextView.setText(name);
 
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } catch (Exception e) {
+                    Log.e("Error", "Exception Throwed", e);
                 }
 
                 return view;
@@ -113,12 +117,12 @@ public class MessengerActivity extends AppCompatActivity implements AdapterView.
             jSONArray = requestService.fetch(hostName + "/api/messenger/getusers", new HashMap<String, String>(), Request.POST);
             messengerJSONArray = new JSONArray();
             for (int i = 0; i < jSONArray.length(); i++) {
-                if (!jSONArray.getJSONObject(i).getString("userName").equals(userNameIntent))
+                if (!jSONArray.getJSONObject(i).getString("userName").equals(userJSONObject.getString("userName")))
                     messengerJSONArray.put(jSONArray.getJSONObject(i));
             }
             messengerBaseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Error", "Exception Throwed", e);
         }
 
         messengerListView.setOnItemClickListener(this);
@@ -127,17 +131,11 @@ public class MessengerActivity extends AppCompatActivity implements AdapterView.
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         try {
-            String name = messengerJSONArray.getJSONObject(position).getString("name");
-            String userName = messengerJSONArray.getJSONObject(position).getString("userName");
-            String userId = messengerJSONArray.getJSONObject(position).getString("id");
-
             Intent intent = new Intent(MessengerActivity.this, MessageBoxActivity.class);
-            intent.putExtra("name", name);
-            intent.putExtra("userName", userName);
-            intent.putExtra("id", userId);
+            intent.putExtra("receiver", messengerJSONArray.getJSONObject(position).toString());
             startActivity(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.e("Error", "Exception Throwed", e);
         }
     }
 }

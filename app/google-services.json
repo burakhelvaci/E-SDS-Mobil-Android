@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "965934048253-k6iu8j8egr3i9j1url0s14dk23p0shii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.esds.app",
+            "certificate_hash": "d470a22f8d6e405056cfb1864d729465c9028f42"
+          }
+        },
+        {
           "client_id": "965934048253-edk5jlhqg0mcsqp3ge0cbkiijr5d2dbj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

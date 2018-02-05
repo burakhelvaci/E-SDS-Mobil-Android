@@ -158,9 +158,10 @@ public class CartActivity extends AppCompatActivity implements AdapterView.OnIte
                                     requestService.affect(hostName + "/api/orderdetail/insertorder", orderDetailDataSet, Request.POST);
 
                                     cartBaseAdapter.notifyDataSetChanged();
+                                    finish();
                                 }
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e("Error", "Exception Throwed", e);
                             }
                         }
 
@@ -173,7 +174,7 @@ public class CartActivity extends AppCompatActivity implements AdapterView.OnIte
                     }.execute();
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("Error", "Exception Throwed", e);
                 }
             }
         });

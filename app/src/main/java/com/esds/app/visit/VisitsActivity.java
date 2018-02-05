@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +31,7 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
     private RequestService requestService;
 
     private JSONArray visitJSONArray = new JSONArray();
-    private String userName;
+    private JSONObject userJSONObject;
 
     private BaseAdapter visitBaseAdapter;
     private LayoutInflater visitLayoutInflater;
@@ -47,7 +48,11 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
 
         requestService = new RequestServiceImpl();
 
-        userName = getIntent().getExtras().getString("userName");
+        try {
+            userJSONObject = new JSONObject(getIntent().getExtras().getString("user").toString());
+        } catch (Exception e) {
+            Log.e("Error", "Exception Throwed", e);
+        }
         visitListView = findViewById(R.id.visit_list_view);
         visitLayoutInflater = LayoutInflater.from(VisitsActivity.this);
         visitSwipeRefreshLayout = findViewById(R.id.srl_visits);
@@ -56,11 +61,11 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
             public void onRefresh() {
                 try {
                     HashMap<String, String> dataSet = new HashMap<>();
-                    dataSet.put("userName", userName);
+                    dataSet.put("userName", userJSONObject.getString("userName"));
                     visitJSONArray = requestService.fetch(hostName + "/api/visit/getvisits", dataSet, Request.POST);
                     visitBaseAdapter.notifyDataSetChanged();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("Error", "Exception Throwed", e);
                 } finally {
                     visitSwipeRefreshLayout.setRefreshing(false);
                 }
@@ -101,7 +106,7 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
                     tvDate.setText(visitDate);
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("Error", "Exception Throwed", e);
                 }
 
                 return view;
@@ -113,11 +118,11 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
 
         try {
             HashMap<String, String> dataSet = new HashMap<>();
-            dataSet.put("userName", userName);
+            dataSet.put("userName", userJSONObject.getString("userName"));
             visitJSONArray = requestService.fetch(hostName + "/api/visit/getvisits", dataSet, Request.POST);
             visitBaseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Error", "Exception Throwed", e);
         }
     }
 
@@ -142,8 +147,8 @@ public class VisitsActivity extends AppCompatActivity implements AdapterView.OnI
             intent.putExtra("customerAddress", customerAddress);
 
             startActivity(intent);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            Log.e("Error", "Exception Throwed", e);
         }
     }
 }

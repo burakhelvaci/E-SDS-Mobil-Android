@@ -95,7 +95,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
         try {
             productJSONArray = requestService.fetch(hostName + "/api/product/getproducts", new HashMap<String, String>(), Request.POST);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Error", "Exception Throwed", e);
         }
 
         productListView = findViewById(R.id.product_list_view);
@@ -149,7 +149,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
                     view.setId(productId);
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("Error", "Exception Throwed", e);
                 }
 
                 return view;
@@ -200,7 +200,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
             productJSONArray = requestService.fetch(hostName + "/api/product/getproductsbycategory", dataSet, Request.POST);
             productBaseAdapter.notifyDataSetChanged();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Error", "Exception Throwed", e);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -219,7 +219,7 @@ public class ProductsActivity extends AppCompatActivity implements NavigationVie
                 menuGroup.add(Menu.NONE, itemId, Menu.NONE, itemName);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Error", "Exception Throwed", e);
         }
     }
 

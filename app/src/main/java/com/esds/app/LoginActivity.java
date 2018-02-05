@@ -3,13 +3,18 @@ package com.esds.app;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.esds.app.enums.Request;
+import com.esds.app.messenger.MyFirebaseInstanceIDService;
 import com.esds.app.service.RequestService;
 import com.esds.app.service.impl.RequestServiceImpl;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 
@@ -38,23 +43,27 @@ public class LoginActivity extends AppCompatActivity {
         final String password = passwordEditText.getText().toString();
 
         try {
-            HashMap<String, String> dataSet = new HashMap<>();
-            dataSet.put("userName", userName);
-            dataSet.put("password", password);
-            String responseData = requestService.fetchLoginData(hostName + "/api/login/dologin", dataSet, Request.POST);
+            HashMap<String, String> userDataSet = new HashMap<>();
+            userDataSet.put("userName", userName);
+            userDataSet.put("password", password);
 
-            if (responseData.equals("true")) {
+            String responseData = requestService.fetchLoginData(hostName + "/api/login/dologin", userDataSet, Request.POST);
+
+            JSONObject userJSONObject = new JSONArray(responseData).getJSONObject(0);
+
+            if (userJSONObject.getString("userName").equals(userName) && userJSONObject.getString("password").equals(password)) {
                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                intent.putExtra("userName", userName);
+                intent.putExtra("user", userJSONObject.toString());
+
+                MyFirebaseInstanceIDService.personnelJSONObject = userJSONObject;
+                MyFirebaseInstanceIDService.hostName = hostName;
+
                 startActivity(intent);
-            } else if(responseData.equals("false")){
+            } else{
                 Toast.makeText(LoginActivity.this, "Hatalı Kullanıcı Adı veya Parola", Toast.LENGTH_LONG).show();
             }
-            else{
-                Toast.makeText(LoginActivity.this, "Bağlantı Hatası : " + hostName, Toast.LENGTH_LONG).show();
-            }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("Error", "Exception Throwed", e);
         }
     }
 }
