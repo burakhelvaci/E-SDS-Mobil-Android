@@ -64,7 +64,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
     @SuppressLint("MissingPermission")
-    private void mapInitializer(){
+    private void mapInitializer() {
         String visitId = getIntent().getExtras().getString("id");
         String customerName = getIntent().getExtras().getString("customerName");
         String[] customerLocation = getIntent().getExtras().getString("customerLocation").split(",");
@@ -137,10 +137,17 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
             @Override
             public void onProviderEnabled(String s) {
+                locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+                mapInitializer();
             }
 
             @Override
             public void onProviderDisabled(String s) {
+                if (ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MapActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                map.setMyLocationEnabled(false);
             }
         };
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -163,7 +170,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
                 double endLat = Double.parseDouble(steps.getJSONObject(i).getJSONObject("end_location").get("lat").toString());
                 double endLng = Double.parseDouble(steps.getJSONObject(i).getJSONObject("end_location").get("lng").toString());
 
-                map.addPolyline(new PolylineOptions().add(new LatLng(startLat, startLng), new LatLng(endLat, endLng)).width(8).color(Color.GREEN));
+                map.addPolyline(new PolylineOptions().add(new LatLng(startLat, startLng), new LatLng(endLat, endLng)).width(16).color(Color.BLUE));
             }
         } catch (Exception e) {
             Log.e("Error", "Exception Throwed", e);

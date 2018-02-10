@@ -19,10 +19,8 @@ import com.esds.app.service.RequestService;
 import com.esds.app.service.impl.RequestServiceImpl;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class MessengerActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {

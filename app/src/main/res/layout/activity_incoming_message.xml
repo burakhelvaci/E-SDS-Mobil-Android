@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.esds.app.messenger.IncomingMessageActivity">
+
+    <TextView
+        android:id="@+id/message_title_in_incoming_message"
+        android:layout_margin="12dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="#6a6a6a"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"/>
+
+
+    <TextView
+        android:id="@+id/message_body_in_incoming_message"
+        android:layout_margin="12dp"
+        android:textSize="18dp"
+        android:textColor="#6a6a6a"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" />
+
+</LinearLayout>

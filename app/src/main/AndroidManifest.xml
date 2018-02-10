@@ -54,21 +54,20 @@
             android:label="@string/title_activity_products"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".product.CartActivity" />
+        <activity android:name=".messenger.IncomingMessageActivity" />
+
+        <service android:name=".messenger.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".messenger.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity android:name=".messenger.MessageBoxActivity"></activity>
-
-        <service
-            android:name=".messenger.MyFirebaseInstanceIDService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-
-        <service
-            android:name=".messenger.MyFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

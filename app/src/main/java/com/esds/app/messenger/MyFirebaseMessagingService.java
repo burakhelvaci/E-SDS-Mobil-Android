@@ -1,10 +1,13 @@
 package com.esds.app.messenger;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import java.util.Iterator;
-import java.util.Map;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -16,20 +19,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Log.e("x", "Size : " + remoteMessage.getData().size());
 
-        if (remoteMessage.getData().size() > 0) {
-            Map<String,String> response = remoteMessage.getData();
-            Iterator<String> iterator = response.keySet().iterator();
-
-            while (iterator.hasNext()){
-                String key = iterator.next();
-                String value = response.get(key);
-
-                Log.e("x", key + " - " + value);
-            }
-        }
+        showMessage(remoteMessage.getFrom(), remoteMessage.getData().get("message"));
 
         if (remoteMessage.getNotification() != null) {
-            Log.e("x", "Notification Body : " + remoteMessage.getNotification().getBody());
+            Log.d("Yeni Mesaj", remoteMessage.getNotification().getBody());
         }
+    }
+
+    void showMessage(String sender, String message) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
+
+        Intent intent = new Intent(this, IncomingMessageActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("sender", sender);
+        intent.putExtra("message", message);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        notificationBuilder.setContentTitle(sender);
+        notificationBuilder.setContentText(message);
+
+        notificationBuilder.setContentIntent(pendingIntent);
+
+        notificationBuilder.setAutoCancel(true);
+        notificationBuilder.setSmallIcon(android.R.drawable.ic_menu_info_details);
+
+
+        SP sp = new SP(this);
+        int id = sp.getId();
+
+        notificationManager.notify(id, notificationBuilder.build());
     }
 }
